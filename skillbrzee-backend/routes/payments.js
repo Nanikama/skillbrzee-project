@@ -17,10 +17,9 @@ const PACKAGES = [
   { id:6, name:'PREMIUM PACKAGE',  price: 1499900},
 ];
 
-// NEW CODE - only creates Razorpay when actually needed
 function getRazorpay() {
   if (!process.env.RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID.includes('YOUR_KEY')) {
-    throw new Error('Razorpay keys not configured');
+    throw new Error('Razorpay keys not configured in environment variables');
   }
   return new Razorpay({
     key_id    : process.env.RAZORPAY_KEY_ID,
@@ -84,7 +83,7 @@ router.post('/create-order', protect, async (req, res) => {
     }
 
     /* Production: create Razorpay order */
-    const order = await razorpay.orders.create({
+    const order = await getRazorpay().orders.create({
       amount  : pkg.price,
       currency: 'INR',
       receipt : `sb_${pkg.id}_${Date.now()}`,
