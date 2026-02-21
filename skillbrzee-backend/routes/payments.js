@@ -17,10 +17,16 @@ const PACKAGES = [
   { id:6, name:'PREMIUM PACKAGE',  price: 1499900},
 ];
 
-const razorpay = new Razorpay({
-  key_id    : process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
+// NEW CODE - only creates Razorpay when actually needed
+function getRazorpay() {
+  if (!process.env.RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID.includes('YOUR_KEY')) {
+    throw new Error('Razorpay keys not configured');
+  }
+  return new Razorpay({
+    key_id    : process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
+  });
+}
 
 const isDev = process.env.NODE_ENV !== 'production';
 
